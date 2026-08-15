@@ -1,7 +1,7 @@
 require_relative 'terminal_logger'
 
-RIGHT_GUESS = TerminalLogger.render_success("УГАДАЛ!!! )")
-WRONG_GUESS = TerminalLogger.render_error("НЕ УГАДАЛ (")
+RIGHT_GUESS = TerminalLogger.render_success("УГАДАЛ!!! ＼(★^∀^★)／")
+WRONG_GUESS = TerminalLogger.render_error("НЕ УГАДАЛ!!! (╯°□°)╯︵ ┻━┻")
 
 random_guess = (rand * 10).to_i + 1
 

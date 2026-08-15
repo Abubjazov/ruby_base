@@ -16,6 +16,7 @@ puts random_guess
   if random_guess == guess 
     puts RIGHT_GUESS
     has_won = true
+
     break 
   elsif guess < random_guess 
     puts "Моё число бОООльше... (‾◡◝)"

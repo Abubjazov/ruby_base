@@ -1,5 +1,6 @@
 require 'dotenv'
-require 'net/http'
+require 'faraday'
+# require 'net/http'
 require 'json'
 require 'time'
 require_relative 'terminal_logger'
@@ -13,22 +14,29 @@ base_url = ENV['OPENWEATHER_API_BASE_URL']
 abort "Ошибка: Переменная OPENWEATHER_API_KEY не найдена! Проверьте файл .env" if api_key.nil? || api_key.empty? 
 
 # Координаты Казани
-latitude = "55.7887"
-longitude = "49.1221"
+latitude = 55.7887
+longitude = 49.1221
 
-URL_STRING = "#{base_url}?lat=#{latitude}&lon=#{longitude}&units=metric&lang=ru&appid=#{api_key}"
-REQ_URI = URI(URL_STRING)
+query_params = {
+  lat: latitude,
+  lon: longitude,
+  units: :metric,
+  lang: :ru,
+  appid: api_key,
+}
 
-# puts URL_STRING.inspect
-# puts REQ_URI.inspect
+# URL_STRING = "#{base_url}?lat=#{latitude}&lon=#{longitude}&units=metric&lang=ru&appid=#{api_key}"
+# REQ_URI = URI(URL_STRING) #'net/http'
+
 
 puts "Отправляем запрос погоды для Казани..."
 puts "\n\n"
 
-response = Net::HTTP.get(REQ_URI)
-parsed_data = JSON.parse(response)
-
-# puts parsed_data
+# response = Net::HTTP.get(REQ_URI) #'net/http'
+# parsed_data = JSON.parse(response) #'net/http'
+# 
+response = Faraday.get(base_url, query_params)
+parsed_data = JSON.parse(response.body)
 
 # Функция для конвертации Unix Timestamp в читаемую строку времени
 def format_time(timestamp, timezone_offset)
@@ -84,5 +92,5 @@ if parsed_data['cod'] == 200
   puts "\n"
   puts TerminalLogger.render_success("=" * 45)
 else
-  puts "Ошибка API: #{parsed_data['message']}"
+  puts TerminalLogger.render_error("Ошибка API: #{parsed_data['message']}")
 end

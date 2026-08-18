@@ -7,27 +7,26 @@ require_relative 'terminal_logger'
 # cc_hash = countries.zip(capitals).to_h
 
 cc_hash = {
-  "Japan" => "Tokyo",
-  "Japan" => "Tokyo",
-  "France" => "Paris",
-  "Brazil" => "Brasilia",
-  "Canada" => "Ottawa",
-  "Germany" => "Berlin",
-  "Egypt" => "Cairo",
-  "Australia" => "Canberra",
-  "India" => "New Delhi",
-  "Italy" => "Rome",
-  "Mexico" => "Mexico City",
-  "Spain" => "Madrid",
-  "Argentina" => "Buenos Aires",
-  "Thailand" => "Bangkok"
+  Japan: "Tokyo",
+  France: "Paris",
+  Brazil: "Brasilia",
+  Canada: "Ottawa",
+  Germany: "Berlin",
+  Egypt: "Cairo",
+  Australia: "Canberra",
+  India: "New Delhi",
+  Italy: "Rome",
+  Mexico: "Mexico City",
+  Spain: "Madrid",
+  Argentina: "Buenos Aires",
+  Thailand: "Bangkok"
 }
 
 correct_answers_count = 0
 
-cc_hash.each do |cc_hash_member|
-    country = cc_hash_member[0]
-    capital = cc_hash_member[1]
+cc_hash.each do |country, capital|
+    # country = cc_hash_member[0]
+    # capital = cc_hash_member[1]
 
     puts "The capital of #{country} is ...?}"
 

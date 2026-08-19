@@ -3,7 +3,7 @@ require 'faraday'
 # require 'net/http'
 require 'json'
 require 'time'
-require_relative 'terminal_logger'
+require_relative '../utils/terminal_logger'
 
 Dotenv.load
 
@@ -28,7 +28,7 @@ query_params = {
 # URL_STRING = "#{base_url}?lat=#{latitude}&lon=#{longitude}&units=metric&lang=ru&appid=#{api_key}"
 # REQ_URI = URI(URL_STRING) #'net/http'
 
-
+puts "\n\n"
 puts "Отправляем запрос погоды для Казани..."
 puts "\n\n"
 
@@ -91,6 +91,7 @@ if parsed_data['cod'] == 200
   puts "Закат солнца:    #{format_time(sys['sunset'], offset)}"
   puts "\n"
   puts TerminalLogger.render_success("=" * 45)
+  puts "\n\n"
 else
   puts TerminalLogger.render_error("Ошибка API: #{parsed_data['message']}")
 end

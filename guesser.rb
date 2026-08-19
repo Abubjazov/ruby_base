@@ -1,4 +1,4 @@
-require_relative 'terminal_logger'
+require_relative 'utils/terminal_logger'
 
 RIGHT_GUESS = TerminalLogger.render_success("Ты угадал!!! ＼(★^∀^★)／")
 WRONG_GUESS = TerminalLogger.render_error("Попытки кончились, ты проиграл!  (╯°□°)╯︵ ┻━┻")

@@ -1,4 +1,4 @@
-require_relative 'terminal_logger'
+require_relative 'utils/terminal_logger'
 
 ACCESS_GRANTED = TerminalLogger.render_success("ACCESS GRANTED")
 ACCESS_DENIED = TerminalLogger.render_error("ACCESS DENIED")

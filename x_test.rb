@@ -21,3 +21,11 @@
 
 # puts cc_hash.keys
 # puts cc_hash.values
+
+# countries = ["Japan", "France", "Brazil", "Canada", "Germany", "Egypt", "Australia", "India", "Italy", "Mexico", "Spain", "Argentina", "Thailand"]
+
+# a = countries.map {|member| member[-5..-1]}
+
+# puts a
+
+puts ['2'].first.inspect

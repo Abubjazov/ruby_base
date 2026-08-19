@@ -1,9 +1,9 @@
 require 'dotenv'
 require 'faraday'
-# require 'net/http'
-require 'json'
-require 'time'
+
 require_relative '../utils/terminal_logger'
+require_relative '../utils/time_utils'
+require_relative 'open_weather_api_client'
 
 Dotenv.load
 
@@ -17,46 +17,28 @@ abort "Ошибка: Переменная OPENWEATHER_API_KEY не найден�
 latitude = 55.7887
 longitude = 49.1221
 
-query_params = {
-  lat: latitude,
-  lon: longitude,
-  units: :metric,
-  lang: :ru,
-  appid: api_key,
-}
-
-# URL_STRING = "#{base_url}?lat=#{latitude}&lon=#{longitude}&units=metric&lang=ru&appid=#{api_key}"
-# REQ_URI = URI(URL_STRING) #'net/http'
+client = OpenWeatherApiClient.new(base_url, api_key)
 
 puts "\n\n"
 puts "Отправляем запрос погоды для Казани..."
 puts "\n\n"
 
-# response = Net::HTTP.get(REQ_URI) #'net/http'
-# parsed_data = JSON.parse(response) #'net/http'
-# 
-response = Faraday.get(base_url, query_params)
-parsed_data = JSON.parse(response.body)
+weather_data = client.current_weather(latitude, longitude)
 
-# Функция для конвертации Unix Timestamp в читаемую строку времени
-def format_time(timestamp, timezone_offset)
-  Time.at(timestamp).utc.getlocal(timezone_offset).strftime('%Y-%m-%d %H:%M:%S')
-end
+if weather_data && weather_data['cod'] == 200
 
-# Проверяем успешность ответа
-if parsed_data['cod'] == 200
-  # Локальные переменные для удобства
-  main = parsed_data['main']
-  wind = parsed_data['wind']
-  sys = parsed_data['sys']
-  weather = parsed_data['weather']&.first || {}
-  offset = parsed_data['timezone']
+    # Локальные переменные для удобства
+  main = weather_data['main']
+  wind = weather_data['wind']
+  sys = weather_data['sys']
+  weather = weather_data['weather']&.first || {}
+  offset = weather_data['timezone']
 
   # 2. Красивый вывод в консоль
-  puts TerminalLogger.render_success("======== ПОГОДА В ГОРОДЕ: #{parsed_data['name']} (#{sys['country']}) ========")
+  puts TerminalLogger.render_success("======== ПОГОДА В ГОРОДЕ: #{weather_data['name']} (#{sys['country']}) ========")
   puts "\n"
-  puts "Координаты:      Широта #{parsed_data['coord']['lat']}, Долгота #{parsed_data['coord']['lon']}"
-  puts "Время замера:    #{format_time(parsed_data['dt'], offset)}"
+  puts "Координаты:      Широта #{weather_data['coord']['lat']}, Долгота #{weather_data['coord']['lon']}"
+  puts "Время замера:    #{format_time(weather_data['dt'], offset)}"
   puts "\n"
   puts TerminalLogger.render_success("=" * 46)
   puts "\n"
@@ -72,12 +54,12 @@ if parsed_data['cod'] == 200
   # Атмосферные показатели
   puts "Давление:        #{main['pressure']} гПа (на уровне моря: #{main['sea_level']} гПа)"
   puts "Влажность:       #{main['humidity']}%"
-  puts "Облачность:      #{parsed_data['clouds']['all']}%"
-  puts "Видимость:       #{parsed_data['visibility']} метров"
+  puts "Облачность:      #{weather_data['clouds']['all']}%"
+  puts "Видимость:       #{weather_data['visibility']} метров"
 
   # Осадки (если есть ключ rain)
-  if parsed_data['rain'] && parsed_data['rain']['1h']
-    puts "Осадки (за 1ч):  #{parsed_data['rain']['1h']} мм"
+  if weather_data['rain'] && weather_data['rain']['1h']
+    puts "Осадки (за 1ч):  #{weather_data['rain']['1h']} мм"
   end
 
   # Ветер
@@ -92,6 +74,9 @@ if parsed_data['cod'] == 200
   puts "\n"
   puts TerminalLogger.render_success("=" * 45)
   puts "\n\n"
+  
 else
-  puts TerminalLogger.render_error("Ошибка API: #{parsed_data['message']}")
+
+  puts TerminalLogger.render_error("Ошибка API: #{weather_data['message']}")
+
 end

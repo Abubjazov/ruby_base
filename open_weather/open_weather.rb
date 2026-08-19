@@ -27,7 +27,7 @@ weather_data = client.current_weather(latitude, longitude)
 
 if weather_data && weather_data['cod'] == 200
 
-    # Локальные переменные для удобства
+  # Локальные переменные для удобства
   main = weather_data['main']
   wind = weather_data['wind']
   sys = weather_data['sys']

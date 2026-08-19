@@ -1,4 +1,4 @@
-require_relative 'terminal_logger'
+require_relative 'utils/terminal_logger'
 
 # countries = ["Japan", "France", "Brazil", "Canada", "Germany", "Egypt", "Australia", "India", "Italy", "Mexico", "Spain", "Argentina", "Thailand"]
 # capitals  = ["Tokyo", "Paris", "Brasilia", "Ottawa", "Berlin", "Cairo", "Canberra", "New Delhi", "Rome", "Mexico City", "Madrid", "Buenos Aires", "Bangkok"]

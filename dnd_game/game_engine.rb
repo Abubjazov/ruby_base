@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'io/console'
+
 require_relative 'classes/dragon'
 require_relative 'classes/hero'
 require_relative '../utils/terminal_logger'
@@ -82,8 +84,28 @@ class Engine
     puts menu_options.join("\n")
   end
 
+  KEY_MAPPING = {
+    65 => 'A', 1060 => 'A', # A, Ф
+    68 => 'D', 1042 => 'D'  # D, В
+  }.freeze
+
   def read_player_action
-    gets.to_s.strip[0].to_s.upcase
+    loop do
+      char = $stdin.getch
+      next if char.nil?
+
+      char_upcase = char.to_s.upcase
+      code = char_upcase.ord
+
+      return KEY_MAPPING[code] if KEY_MAPPING.key?(code)
+
+      handle_invalid_input(char)
+    end
+  end
+
+  def handle_invalid_input(char)
+    input_text = [13, 10].include?(char.ord) ? 'Enter' : char.strip
+    puts "\nОжидаются только A или D! Вы ввели: #{input_text.empty? ? 'Space/Blank' : input_text}"
   end
 
   def drink_potion_if_possible

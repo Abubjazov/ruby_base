@@ -24,9 +24,7 @@ class Engine
       compare_answers next_question.answers, next_question.correct_answer
     end
 
-    file_writer = FileWriter.new @user_name
-
-    file_writer.write "Результаты пользователя #{@user_name}\n\n" \
+    @file_writer.write "Результаты пользователя #{@user_name}\n\n" \
     "Правильных ответов: #{@correct_answers_count}\n" \
     "Неправильных ответов: #{@incorrect_answers_count}"
   end

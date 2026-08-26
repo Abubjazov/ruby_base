@@ -46,38 +46,44 @@ class Engine
     @incorrect_answers_count += 1
   end
 
-  def compare_answers(answers, correct_answer) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
+  def compare_answers(answers, correct_answer)
+    user_answer = ask_valid_answer(answers)
+
+    if user_answer == correct_answer
+      handle_success
+    else
+      handle_failure
+    end
+  end
+
+  def ask_valid_answer(answers)
     loop do
       puts 'Введите ваш ответ:'
-      user_answer = gets.strip[0].upcase
+      input = gets.strip[0]&.upcase
 
-      if user_answer.between?('A', 'D')
-        user_answer = answers[user_answer]
+      return answers[input] if input&.between?('A', 'D')
 
-        answer_correct = user_answer == correct_answer
-
-        if answer_correct
-          add_correct_answer_count
-
-          puts TerminalLogger.render_success('           ')
-          puts TerminalLogger.render_success('＼(★^∀^★)／')
-          puts TerminalLogger.render_success('           ')
-          puts "\n"
-          puts TerminalLogger.render_success('Да!!! Это правильный ответ!')
-        else
-          add_incorrect_answer_count
-
-          puts TerminalLogger.render_error('              ')
-          puts TerminalLogger.render_error('(╯°□°)╯︵ ┻━┻ ')
-          puts TerminalLogger.render_error('              ')
-          puts "\n"
-          puts TerminalLogger.render_error('Нет, ты ошибся!')
-        end
-
-        break
-      else
-        puts 'Ответ только A - D'
-      end
+      puts 'Ответ только A - D'
     end
+  end
+
+  def handle_success
+    add_correct_answer_count
+
+    puts TerminalLogger.render_success('           ')
+    puts TerminalLogger.render_success('＼(★^∀^★)／')
+    puts TerminalLogger.render_success('           ')
+    puts "\n"
+    puts TerminalLogger.render_success('Да!!! Это правильный ответ!')
+  end
+
+  def handle_failure
+    add_incorrect_answer_count
+
+    puts TerminalLogger.render_error('              ')
+    puts TerminalLogger.render_error('(╯°□°)╯︵ ┻━┻ ')
+    puts TerminalLogger.render_error('              ')
+    puts "\n"
+    puts TerminalLogger.render_error('Нет, ты ошибся!')
   end
 end

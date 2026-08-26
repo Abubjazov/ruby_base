@@ -23,6 +23,8 @@ class Character
     dmg
   end
 
+  protected
+
   def receive_dmg(dmg)
     @hit_points -= dmg
   end

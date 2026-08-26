@@ -1,5 +1,7 @@
-class OpenWeatherApiClient
+# frozen_string_literal: true
 
+# класс для работы с API Open Weather
+class OpenWeatherApiClient
   def initialize(base_url, api_key)
     @base_url = base_url
     @api_key = api_key
@@ -11,33 +13,32 @@ class OpenWeatherApiClient
   end
 
   def current_weather(latitude, longitude)
-
     query_params = {
       lat: latitude,
       lon: longitude,
       units: :metric,
       lang: :ru,
-      appid: @api_key,
+      appid: @api_key
     }
-    # Выполняем запрос к эндпоинту
-    response = @connection.get('', query_params)
-    
-    # Возвращаем тело ответа, если HTTP-статус в диапазоне 200-299
-    return response.body if response.success?
-    
-    nil
+
+    fetch_weather_data(query_params)
+  end
+
+  private
+
+  def fetch_weather_data(params)
+    response = @connection.get('', params)
+    response.body if response.success?
   rescue Faraday::ConnectionFailed => e
-    # Ошибка: сервер недоступен, упал интернет или неверный домен (DNS)
-    puts "Ошибка подключения: #{e.message}"
-    nil
+    log_error('Ошибка подключения', e)
   rescue Faraday::TimeoutError => e
-    # Ошибка: сервер слишком долго не отвечал
-    puts "Превышено время ожидания ответа: #{e.message}"
-    nil
+    log_error('Превышено время ожидания ответа', e)
   rescue Faraday::Error => e
-    # Общая подстраховка для любых других ошибок Faraday
-    puts "Произошла непредвиденная ошибка Faraday: #{e.message}"
+    log_error('Произошла непредвиденная ошибка Faraday', e)
+  end
+
+  def log_error(message, error)
+    puts "#{message}: #{error.message}"
     nil
   end
-  
 end

@@ -4,7 +4,7 @@ require_relative '../utils/terminal_logger'
 
 a_code = 'A'.ord
 
-puts "Введите ваше имя:"
+puts 'Введите ваше имя:'
 user_name = gets.strip
 current_time = Time.now.strftime('%d-%m-%Y_%H-%M-%S')
 file_name = "QUIZ_#{user_name}_#{current_time}.txt"
@@ -15,63 +15,79 @@ all_questions = YAML.safe_load_file("#{current_path}/questions.yml", symbolize_n
 correct_answers_count = 0
 incorrect_answers_count = 0
 
-all_questions.shuffle.each do |item|
+def display_question(question_text)
+  puts "\n\n"
+  header_text = ">>>>>>>  #{question_text}  <<<<<<<"
+  padding = ' ' * header_text.length
 
-  puts "\n\n" 
-  header_text = ">>>>>>>  #{item[:question]}  <<<<<<<"
-  puts TerminalLogger.render_success(" " * header_text.length)
+  puts TerminalLogger.render_success(padding)
   puts TerminalLogger.render_success(header_text)
-  puts TerminalLogger.render_success(" " * header_text.length)
+  puts TerminalLogger.render_success(padding)
   puts "\n"
+end
 
-  answers = item[:answers].shuffle.each_with_index.inject({}) do |result, (answer, i)|
+def prepare_and_display_answers(raw_answers)
+  a_code = 'A'.ord
+
+  processed_answers = raw_answers.shuffle.each_with_index.each_with_object({}) do |(answer, i), result|
     answer_char = (a_code + i).chr
-    
     result[answer_char] = answer
-
     puts "#{answer_char}. #{answer}"
-
-    result
   end
 
   puts "\n"
+  processed_answers
+end
 
+def ask_and_check_answer(answers, correct_answer)
+  user_answer = ask_valid_letter
+
+  if answers[user_answer] == correct_answer
+    handle_correct_choice
+  else
+    handle_incorrect_choice
+  end
+end
+
+def ask_valid_letter
   loop do
-    puts "Введите ваш ответ:"
-    user_answer = gets.strip[0].upcase
+    puts 'Введите ваш ответ:'
+    input = gets.strip[0]&.upcase
 
-    if user_answer.between?('A', 'D')
-      user_answer = answers[user_answer]
+    return input if input&.between?('A', 'D')
 
-      answer_correct = user_answer == item[:correct_answer] 
+    puts 'Ответ только A - D'
+  end
+end
 
-      if answer_correct
-        correct_answers_count += 1
+def handle_correct_choice
+  @correct_answers_count = (@correct_answers_count || 0) + 1 # или просто correct_answers_count += 1, если это локальная переменная вне методов (тогда передайте её по ссылке/сделайте глобальной)
 
-        puts TerminalLogger.render_success("           ")
-        puts TerminalLogger.render_success("＼(★^∀^★)／")
-        puts TerminalLogger.render_success("           ")
-        puts "\n"
-        puts TerminalLogger.render_success("Да!!! Это правильный ответ!")
-      else
-        incorrect_answers_count += 1
+  puts TerminalLogger.render_success('           ')
+  puts TerminalLogger.render_success('＼(★^∀^★)／')
+  puts TerminalLogger.render_success('           ')
+  puts "\n"
+  puts TerminalLogger.render_success('Да!!! Это правильный ответ!')
+end
 
-        puts TerminalLogger.render_error("              ")
-        puts TerminalLogger.render_error("(╯°□°)╯︵ ┻━┻ ")
-        puts TerminalLogger.render_error("              ")
-        puts "\n"
-        puts TerminalLogger.render_error("Нет, ты ошибся!")
-      end
+def handle_incorrect_choice
+  @incorrect_answers_count = (@incorrect_answers_count || 0) + 1
 
-      break
-    else
-      puts "Ответ только A - D"
-    end
-  end  
+  puts TerminalLogger.render_error('              ')
+  puts TerminalLogger.render_error('(╯°□°)╯︵ ┻━┻ ')
+  puts TerminalLogger.render_error('              ')
+  puts "\n"
+  puts TerminalLogger.render_error('Нет, ты ошибся!')
+end
+
+all_questions.shuffle.each do |item|
+  display_question(item[:question])
+  answers = prepare_and_display_answers(item[:answers])
+  ask_and_check_answer(answers, item[:correct_answer])
 end
 
 File.write(
-  "#{current_path}/#{file_name}", 
+  "#{current_path}/#{file_name}",
   "#{current_time}\n\nРезультаты пользователя #{user_name}\n\nПравильных ответов: #{correct_answers_count}\nНеправильных ответов: #{incorrect_answers_count}",
   mode: 'a'
-  )
+)

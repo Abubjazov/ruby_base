@@ -1,15 +1,18 @@
+# frozen_string_literal: true
+
+# Animal class
 class Animal
   attr_accessor :age
   attr_reader :name
 
-  def initialize name, age
-    @name = name 
-    @age = age    
+  def initialize(name, age)
+    @name = name
+    @age = age
   end
 
   def speak
-    puts "SOME KIND OF SOUND"
-  end 
+    puts 'SOME KIND OF SOUND'
+  end
 
   # def get_name
   #   return @name
@@ -24,14 +27,16 @@ class Animal
   # end
 end
 
+# Dog class
 class Dog < Animal
   def speak
-    puts "WOOF!"
-  end  
+    puts 'WOOF!'
+  end
 end
 
+# Cat class
 class Cat < Animal
   def speak
-    puts "MEOW!"
-  end  
+    puts 'MEOW!'
+  end
 end

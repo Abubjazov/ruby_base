@@ -15,3 +15,7 @@ my_proc1 = proc { |a, b| a + b }
 caller my_proc1 do
   puts 'Block passed to caller.'
 end
+
+def func(aaa, bbb)
+  puts aaa + bbb
+end

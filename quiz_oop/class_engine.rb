@@ -3,13 +3,17 @@
 require_relative '../utils/terminal_logger'
 require_relative 'class_file_writer'
 require_relative 'class_questions_data'
+require_relative 'class_input_reader'
 
 # Класс для движка игры
 class Engine
   attr_reader :correct_answers_count, :incorrect_answers_count
 
   def initialize
-    @user_name = user_name
+    @input_reader = InputReader.new
+    @user_name = @input_reader.read msg: 'Введите ваше имя:',
+                                    validator: ->(value) { !value.empty? },
+                                    err_msg: 'Имя не может быть пустым!'
     @question_data = QuestionsData.new
     @file_writer = FileWriter.new @user_name
     @correct_answers_count = 0
@@ -31,11 +35,6 @@ class Engine
 
   private
 
-  def user_name
-    puts 'Введите ваше имя:'
-    gets.strip
-  end
-
   def add_correct_answer_count
     @correct_answers_count += 1
   end
@@ -55,14 +54,12 @@ class Engine
   end
 
   def ask_valid_answer(answers)
-    loop do
-      puts 'Введите ваш ответ:'
-      input = gets.strip[0]&.upcase
+    user_input = @input_reader.read msg: 'Введите ваш ответ:',
+                                    validator: ->(value) { !value.empty? && value.strip[0].upcase.between?('A', 'D') },
+                                    err_msg: 'Ответ только A - D',
+                                    process: ->(value) { value.strip[0].upcase }
 
-      return answers[input] if input&.between?('A', 'D')
-
-      puts 'Ответ только A - D'
-    end
+    answers[user_input]
   end
 
   def handle_success

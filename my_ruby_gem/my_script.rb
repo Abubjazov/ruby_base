@@ -1,5 +1,7 @@
-require_relative 'printer'
-require_relative 'importer'
+# frozen_string_literal: true
+
+require_relative 'printer/engine'
+require_relative 'importer/engine'
 
 imp = Importer::Engine.new
 pri = Printer::Engine.new

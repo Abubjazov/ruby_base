@@ -44,3 +44,28 @@ end
 method1 do
   puts 'Hello from method1'
 end
+
+# Метод принимает блок и превращает его в Proc-объект `my_block`
+def execute_and_log(&my_block)
+  puts 'Старт метода'
+
+  # Теперь my_block — это обычный Proc, вызываем через .call
+  my_block.call if block_given?
+
+  puts 'Конец метода'
+end
+
+# Передаем обычный блок (в фигурных скобках)
+execute_and_log { puts 'Привет из блока!' }
+
+# Метод ожидает блок через yield (без явного & в аргументах)
+def print_twice
+  yield
+  yield
+end
+
+# У нас есть готовый Proc
+say_hi = proc { puts 'Привет!' }
+
+# Передаем Proc, «распаковывая» его амперсандом в блок
+print_twice(&say_hi)
